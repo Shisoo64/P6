@@ -3,7 +3,7 @@ let cells = document.getElementsByClassName("cell");
 
 
 initGrid(10, 10);
-addRandom(8, "rock");
+addRandom(10, "rock");
 addRandom(4, "weapon");
 addRandom(2, "spawnPoint");
 
@@ -28,15 +28,12 @@ function makeColumns(cellNum) {
 };
 
 
+
 function addRandom(num, className) {
-  for (i = 0; i < num; i++) {
-    let item = $('.cell')[Math.floor(Math.random() * $('.cell').length)];
+  for (let i = 0; i < num; i++) {
+    let item = $('.cell.empty')[Math.floor(Math.random() * $('.cell.empty').length)];
     console.log(item);
-    if(item.className == "empty"){
-      item.classList.add(className);
-      item.classList.remove("empty");
-    }else{
-      i--;
-    }
+    item.classList.add(className);
+    item.classList.remove("empty");
   }
 }
