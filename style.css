@@ -1,23 +1,76 @@
 .cell {
-  border: 1px solid gray;
-  width: 60px;
-  height: 60px;
-  display: inline-block;
-}
-
-.gridRow {
+	/*border: 1px solid #80808030;*/
+	width: 60px;
 	height: 60px;
+	display: inline-block;
+
+	image-rendering: pixelated;
+	background-size: contain;
+	background-repeat: no-repeat;
 }
 
 
-.rock{
-	background-color: #000000;
+#container {
+	margin:auto;
+  display: flex;
+  flex-flow: row wrap;
+  width:600px;
 }
 
+
+
+
+
+/* Skins */ 
+
+.empty{
+	background-image: url("img/ground.png");
+}
+
+.player{
+	background-image: url("img/player.png");
+}
+
+
+.movement{
+	-webkit-box-shadow: inset 0px 0px 30px 10px rgba(20,98,255,0.5);
+	-moz-box-shadow: inset 0px 0px 30px 10px rgba(20,98,255,0.5);
+	box-shadow: inset 0px 0px 30px 10px rgba(20,98,255,0.5);
+}
+
+
+/*
 .weapon{
-	background-color: green;
+	background-image: url("img/weapon.png");
+}
+*/
+
+.weapon-sword{
+	background-image: url("img/weapon-sword.png");
 }
 
-.spawnPoint{
-	background-color: blue;
+.weapon-axe{
+	background-image: url("img/weapon-axe.png");
+}
+
+.weapon-spear{
+	background-image: url("img/weapon-spear.png");
+}
+
+
+/*
+.rock{
+	background-image: url("img/rock.png");
+}*/
+
+.rock0{
+	background-image: url("img/rock0.png");
+}
+
+.rock1{
+	background-image: url("img/rock1.png");
+}
+
+.rock2{
+	background-image: url("img/rock2.png");
 }

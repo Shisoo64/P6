@@ -1,97 +1,118 @@
-let rows = document.getElementsByClassName("gridRow");
-let cells = document.getElementsByClassName("cell");
-
 class Player {
-  constructor(x, y, health, weapon) {
-    this.x = x;
-    this.y = y;
+  constructor(name, code, weapon) {
+    this.name = name;
+    this.code = code;
+    this.cell = null;
+    this.weapon = weapon;
     this.health = 100;
+  }
+
+  move(){
+    let availableCells = playGrid.cells.filter(availableCell => (availableCell.x === this.cell.x + 1 || availableCell.x == this.cell.x + 2 || availableCell.x == this.cell.x - 1 || availableCell.x == this.cell.x - 2)
+     && (availableCell.y === this.cell.y + 1 || availableCell.y == this.cell.y + 2 || availableCell.y == this.cell.y - 1 || availableCell.y == this.cell.y - 2));
+
+    availableCells.forEach(cell => cell.move = true);
+
+
+    availableCells.forEach(clickedCell => clickedCell.element.click(function() {
+      clickedCell.player = this;
+      playGrid.cells.forEach(cell => cell.render());
+          console.log(this.cell);
+    }));
+    console.log(this.cell);
   }
 
 }
 
 class Weapon {
-  constructor(x, y, name, damage) {
-    this.x = x;
-    this.y = y;
+  constructor(name, code, damage) {
+    this.name = name;
+    this.code = code;
+    this.damage = damage;
   }
-
 }
 
 class Cell {
-  constructor(x, y, status) {
+  constructor(x, y) {
     this.x = x;
     this.y = y;
-    $('<div class="cell empty" data-x="'+ x +'" data-y="'+ y +'" ></div>').appendTo(rows[x]);
+    this.player = null;
+    this.weapon = null;
+    this.available = true;
+    this.move = false;
+    this.element = $('<div></div>');
   }
-
-  checkSurround(second, perimeter) {
-    console.log(this.x,this.y);
-    console.log(second.data("x"),second.data("y"));
-    return(((second.data("x") <= this.x + perimeter) && (second.data("x") >= this.x - perimeter)) &&
-      ((second.data("y") <= this.y + perimeter) && (second.data("y") >= this.y - perimeter)));
-  };
+  
+  render() {
+    this.element.removeClass().addClass("cell");
+    if(!this.available) {
+      this.element.addClass("rock" + Math.floor(Math.random() * 3));
+    }else if(this.move) {
+      this.element.addClass("movement");
+    }else if(this.weapon !== null) {
+      this.element.addClass("weapon").addClass("weapon-" + this.weapon.code);
+    }else if(this.player !== null) {
+      this.element.addClass("player").addClass("player-" + this.player.code);
+    }else{
+      this.element.addClass("empty");
+    }
+  }
 
 }
 
 class Grid {
-  constructor(hauteur, largeur, map) {
-    this.map = new Array(hauteur).fill(new Array(largeur));
-    // For pour création des Rows
-    for (var x = 0; x < hauteur; x++) {
-      $('<div class="gridRow" data-row="'+ x +'" ></div>').appendTo('#container');
-      // For pour ajout des cases a la Row
-      for (var y = 0; y < largeur; y++) {
-        this.map[x][y] = new Cell(x,y,"empty");
-      };
-    };
+  constructor(height, width, numberOfRocks, players, weapons) {
+    this.cells = [];
+    this.players = players;
+    this.weapons = weapons;
+    this.numberOfRocks = numberOfRocks;    
+    this.currentPlayer = null;
+    for (var x = 0; x < height; x++) {
+      for (var y = 0; y < width; y++) {
+        this.cells.push(new Cell(x,y));
+        this.cells[this.cells.length - 1].element.appendTo("#container");
+      }
+    }
+
+    for (var i = 0; i < this.numberOfRocks; i++) {
+      let randomCell = this.randomCell();
+      randomCell.available = false;
+    }
+    this.weapons.forEach(weapon => {
+      let randomCell = this.randomCell();
+      randomCell.weapon = weapon;
+    });
+    this.players.forEach(player => {
+      let randomCell = this.randomCell();
+      randomCell.player = player;
+      player.cell = randomCell;
+    });
+    this.cells.forEach(cell => cell.render());
   }
 
-  randomCell(status){
-    let randomX = Math.floor(Math.random() * this.map.length);
-    let randomY = Math.floor(Math.random() * this.map[randomX].length);
-    console.log(randomX, randomY);
-    return(randomX, randomY);
-  }
-
-}
-
-
-
-playGrid = new Grid(10,10);
-addRandom(10, "rock");
-addRandom(4, "weapon");
-addRandom(2, "spawnPoint");
-playGrid.randomCell();
-
-
-
-// Check si les spawn sont a côté
-while(checkSurround($('.cell.spawnPoint:first'), $('.cell.spawnPoint:last'), 2)){
-  $('.cell.spawnPoint').addClass('empty').removeClass('spawnPoint');
-  console.log("Spawnpoint too close");
-  addRandom(2, "spawnPoint");
-}
-
-
-
-function checkSurround(first, second, perimeter) {
-
-  console.log(first.data("x"),first.data("y"));
-  console.log(second.data("x"),second.data("y"));
-
-  return(((second.data("x") <= first.data("x") + perimeter) &&
-   (second.data("x") >= first.data("x") - perimeter)) &&
-    ((second.data("y") <= first.data("y") + perimeter) &&
-     (second.data("y") >= first.data("y") - perimeter)))
-};
-
-
-function addRandom(num, className) {
-  for (let i = 0; i < num; i++) {
-    let item = $('.cell.empty')[Math.floor(Math.random() * $('.cell.empty').length)];
-    console.log(item);
-    item.classList.add(className);
-    item.classList.remove("empty");
+  randomCell(){
+    let availableCells = this.cells.filter(cell => cell.available && cell.player === null && cell.weapon === null);
+    let random = Math.floor(Math.random() * availableCells.length);
+    return(availableCells[random]);
   }
 }
+
+
+//Grid generation
+let playGrid = new Grid(10, 10,
+  10,
+  [
+    new Player("Ninja", 'ninja', new Weapon("Dague", "dague", 10)),
+    new Player("Samourai", 'samourai', new Weapon("Dague", "dague", 10))
+  ],
+  [
+    new Weapon("Epée", "sword", 15),
+    new Weapon("Epée", "sword", 15),
+    new Weapon("Hache", "axe", 20),
+    new Weapon("Lance", "spear", 30)
+  ]
+);
+
+
+
+playGrid.players[0].move();
