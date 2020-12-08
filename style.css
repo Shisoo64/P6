@@ -33,9 +33,10 @@
 
 
 .movement{
-	-webkit-box-shadow: inset 0px 0px 30px 10px rgba(20,98,255,0.5);
-	-moz-box-shadow: inset 0px 0px 30px 10px rgba(20,98,255,0.5);
-	box-shadow: inset 0px 0px 30px 10px rgba(20,98,255,0.5);
+	-webkit-box-shadow: inset 0px 0px 50px 15px rgba(41,164,255,0.6);
+	-moz-box-shadow: inset 0px 0px 50px 15px rgba(41,164,255,0.6);
+	box-shadow: inset 0px 0px 50px 15px rgba(41,164,255,0.6);
+	background-image: url("img/ground.png");
 }
 
 
