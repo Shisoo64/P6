@@ -7,21 +7,6 @@ class Player {
     this.health = 100;
   }
 
-  move(){
-    let availableCells = playGrid.cells.filter(availableCell => (availableCell.x === this.cell.x + 1 || availableCell.x == this.cell.x + 2 || availableCell.x == this.cell.x - 1 || availableCell.x == this.cell.x - 2)
-     && (availableCell.y === this.cell.y + 1 || availableCell.y == this.cell.y + 2 || availableCell.y == this.cell.y - 1 || availableCell.y == this.cell.y - 2));
-
-    availableCells.forEach(cell => cell.move = true);
-
-
-    availableCells.forEach(clickedCell => clickedCell.element.click(function() {
-      clickedCell.player = this;
-      playGrid.cells.forEach(cell => cell.render());
-          console.log(this.cell);
-    }));
-    console.log(this.cell);
-  }
-
 }
 
 class Weapon {
@@ -47,7 +32,7 @@ class Cell {
     this.element.removeClass().addClass("cell");
     if(!this.available) {
       this.element.addClass("rock" + Math.floor(Math.random() * 3));
-    }else if(this.move) {
+    }else if(this.move == true) {
       this.element.addClass("movement");
     }else if(this.weapon !== null) {
       this.element.addClass("weapon").addClass("weapon-" + this.weapon.code);
@@ -66,7 +51,7 @@ class Grid {
     this.players = players;
     this.weapons = weapons;
     this.numberOfRocks = numberOfRocks;    
-    this.currentPlayer = null;
+    this.currentPlayer = this.players[0];
     for (var x = 0; x < height; x++) {
       for (var y = 0; y < width; y++) {
         this.cells.push(new Cell(x,y));
@@ -93,13 +78,57 @@ class Grid {
   randomCell(){
     let availableCells = this.cells.filter(cell => cell.available && cell.player === null && cell.weapon === null);
     let random = Math.floor(Math.random() * availableCells.length);
-    return(availableCells[random]);
+    return availableCells[random];
   }
+
+  getCell(x,y){
+    return  this.cells.find(cell => cell.x === x && cell.y === y);
+  }
+
+  move(){
+    //Up
+    for(var i = 1; i <= 3; i++) {
+      let cell = this.getCell(this.currentPlayer.cell.x, this.currentPlayer.cell.y + i);
+      if(cell == null || cell.available == false){ 
+        break; 
+      }
+      cell.move = true;
+      cell.render();
+    }
+    //Down
+    for(var i = 1; i <= 3; i++) {
+      let cell = this.getCell(this.currentPlayer.cell.x, this.currentPlayer.cell.y - i);
+      if(cell == null || cell.available == false){ 
+        break; 
+      }
+      cell.move = true;
+      cell.render();
+    }
+    //Left
+    for(var i = 1; i <= 3; i++) {
+      let cell = this.getCell(this.currentPlayer.cell.x - i, this.currentPlayer.cell.y);
+      if(cell == null || cell.available == false){ 
+        break; 
+      }
+      cell.move = true;
+      cell.render();
+    }
+    //Right
+    for(var i = 1; i <= 3; i++) {
+      let cell = this.getCell(this.currentPlayer.cell.x + i, this.currentPlayer.cell.y);
+      if(cell == null || cell.available == false){ 
+        break; 
+      }
+      cell.move = true;
+      cell.render();
+    }
+  }
+
 }
 
 
 //Grid generation
-let playGrid = new Grid(10, 10,
+let playGrid = new Grid(10,10,
   10,
   [
     new Player("Ninja", 'ninja', new Weapon("Dague", "dague", 10)),
@@ -114,5 +143,4 @@ let playGrid = new Grid(10, 10,
 );
 
 
-
-playGrid.players[0].move();
+playGrid.move();
