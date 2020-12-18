@@ -18,7 +18,7 @@ class Weapon {
 }
 
 class Cell {
-  constructor(x, y) {
+  constructor(x, y, grid) {
     this.x = x;
     this.y = y;
     this.player = null;
@@ -26,19 +26,24 @@ class Cell {
     this.available = true;
     this.move = false;
     this.element = $('<div></div>');
+    this.grid = grid;
   }
   
   render() {
     this.element.removeClass().addClass("cell");
     if(!this.available) {
       this.element.addClass("rock" + Math.floor(Math.random() * 3));
-    }else if(this.move == true) {
+    }
+    if(this.move == true) {
       this.element.addClass("movement");
-    }else if(this.weapon !== null) {
+    }
+    if(this.weapon !== null) {
       this.element.addClass("weapon").addClass("weapon-" + this.weapon.code);
-    }else if(this.player !== null) {
+    }
+    if(this.player !== null) {
       this.element.addClass("player").addClass("player-" + this.player.code);
-    }else{
+    }
+    if(this.available && !this.move && this.weapon == null && this.player == null){
       this.element.addClass("empty");
     }
   }
@@ -54,19 +59,22 @@ class Grid {
     this.currentPlayer = this.players[0];
     for (var x = 0; x < height; x++) {
       for (var y = 0; y < width; y++) {
-        this.cells.push(new Cell(x,y));
+        this.cells.push(new Cell(x,y,this));
         this.cells[this.cells.length - 1].element.appendTo("#container");
       }
     }
 
+    //Ajout random des pierres
     for (var i = 0; i < this.numberOfRocks; i++) {
       let randomCell = this.randomCell();
       randomCell.available = false;
     }
+    //Ajout random des armes
     this.weapons.forEach(weapon => {
       let randomCell = this.randomCell();
       randomCell.weapon = weapon;
     });
+    //Ajout random des spawn
     this.players.forEach(player => {
       let randomCell = this.randomCell();
       randomCell.player = player;
@@ -75,16 +83,20 @@ class Grid {
     this.cells.forEach(cell => cell.render());
   }
 
+  //Selectionne une cellule random
   randomCell(){
     let availableCells = this.cells.filter(cell => cell.available && cell.player === null && cell.weapon === null);
     let random = Math.floor(Math.random() * availableCells.length);
     return availableCells[random];
   }
 
+  //Return une cell grace au xy en parametre
   getCell(x,y){
     return  this.cells.find(cell => cell.x === x && cell.y === y);
   }
 
+
+  //Affiche la croix de deplacements
   move(){
     //Up
     for(var i = 1; i <= 3; i++) {
@@ -122,6 +134,30 @@ class Grid {
       cell.move = true;
       cell.render();
     }
+
+
+    let availableCells = this.cells.filter(cell => cell.move);
+
+    availableCells.forEach(cell => cell.element.click(() => {
+      this.currentPlayer.cell.player = null;
+      this.currentPlayer.cell.render();
+      this.currentPlayer.cell = cell;
+      cell.player = this.currentPlayer;
+      if(cell.weapon != null){
+        this.currentPlayer.weapon = cell.weapon;
+        cell.weapon = null;
+        console.log("Vous avez ramassé : ");
+        console.log(this.currentPlayer.weapon);
+      }
+      availableCells.forEach(cell => {
+        cell.move = false;
+        cell.render();
+      });
+
+    }));
+
+
+
   }
 
 }
@@ -141,6 +177,7 @@ let playGrid = new Grid(10,10,
     new Weapon("Lance", "spear", 30)
   ]
 );
+
 
 
 playGrid.move();
