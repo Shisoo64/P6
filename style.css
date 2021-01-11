@@ -1,7 +1,7 @@
 .cell {
 	/*border: 1px solid #80808030;*/
-	width: 60px;
-	height: 60px;
+	width: 50px;
+	height: 50px;
 	display: inline-block;
 
 	image-rendering: pixelated;
@@ -11,13 +11,22 @@
 
 
 #container {
-	margin:auto;
+  margin:auto;
   display: flex;
   flex-flow: row wrap;
-  width:600px;
+  width:500px;
 }
 
 
+#actions{
+	margin:auto;
+	width:500px;
+}
+
+#actions .btn{
+	width: 45%;
+    height: 60px;
+}
 
 
 
@@ -28,7 +37,7 @@
 }
 
 .player{
-	background-image: url("img/player.png");
+	background-image: url("img/player.png")!important;
 }
 
 
@@ -36,7 +45,6 @@
 	-webkit-box-shadow: inset 0px 0px 50px 15px rgba(41,164,255,0.6);
 	-moz-box-shadow: inset 0px 0px 50px 15px rgba(41,164,255,0.6);
 	box-shadow: inset 0px 0px 50px 15px rgba(41,164,255,0.6);
-	background-image: url("img/ground.png");
 }
 
 
@@ -45,6 +53,10 @@
 	background-image: url("img/weapon.png");
 }
 */
+
+.weapon-dagger{
+	background-image: url("img/weapon-dagger.png");
+}
 
 .weapon-sword{
 	background-image: url("img/weapon-sword.png");

@@ -5,6 +5,14 @@ class Player {
     this.cell = null;
     this.weapon = weapon;
     this.health = 100;
+    this.defend = false;
+  }
+
+
+  //Actualise l'interface
+  renderPlayerInfo() {
+    $("#playerHealth").text(this.health);
+    $("#currentPlayer").text(this.code);
   }
 
 }
@@ -57,6 +65,8 @@ class Grid {
     this.weapons = weapons;
     this.numberOfRocks = numberOfRocks;    
     this.currentPlayer = this.players[0];
+    this.opponentPlayer = this.players[1];
+
     for (var x = 0; x < height; x++) {
       for (var y = 0; y < width; y++) {
         this.cells.push(new Cell(x,y,this));
@@ -81,6 +91,8 @@ class Grid {
       player.cell = randomCell;
     });
     this.cells.forEach(cell => cell.render());
+    this.currentPlayer.renderPlayerInfo();
+    this.move();
   }
 
   //Selectionne une cellule random
@@ -98,10 +110,11 @@ class Grid {
 
   //Affiche la croix de deplacements
   move(){
+    console.log("Move");
     //Up
     for(var i = 1; i <= 3; i++) {
       let cell = this.getCell(this.currentPlayer.cell.x, this.currentPlayer.cell.y + i);
-      if(cell == null || cell.available == false){ 
+      if(cell == null || cell.available == false || cell.player != null){ 
         break; 
       }
       cell.move = true;
@@ -110,8 +123,8 @@ class Grid {
     //Down
     for(var i = 1; i <= 3; i++) {
       let cell = this.getCell(this.currentPlayer.cell.x, this.currentPlayer.cell.y - i);
-      if(cell == null || cell.available == false){ 
-        break; 
+      if(cell == null || cell.available == false || cell.player != null){
+        break;
       }
       cell.move = true;
       cell.render();
@@ -119,8 +132,8 @@ class Grid {
     //Left
     for(var i = 1; i <= 3; i++) {
       let cell = this.getCell(this.currentPlayer.cell.x - i, this.currentPlayer.cell.y);
-      if(cell == null || cell.available == false){ 
-        break; 
+      if(cell == null || cell.available == false || cell.player != null){
+        break;
       }
       cell.move = true;
       cell.render();
@@ -128,8 +141,8 @@ class Grid {
     //Right
     for(var i = 1; i <= 3; i++) {
       let cell = this.getCell(this.currentPlayer.cell.x + i, this.currentPlayer.cell.y);
-      if(cell == null || cell.available == false){ 
-        break; 
+      if(cell == null || cell.available == false || cell.player != null){
+        break;
       }
       cell.move = true;
       cell.render();
@@ -143,21 +156,54 @@ class Grid {
       this.currentPlayer.cell.render();
       this.currentPlayer.cell = cell;
       cell.player = this.currentPlayer;
+
       if(cell.weapon != null){
-        this.currentPlayer.weapon = cell.weapon;
-        cell.weapon = null;
+        [this.currentPlayer.weapon, cell.weapon] = [cell.weapon, this.currentPlayer.weapon];
         console.log("Vous avez ramassé : ");
         console.log(this.currentPlayer.weapon);
       }
       availableCells.forEach(cell => {
         cell.move = false;
+        cell.element.off("click");
         cell.render();
       });
-
+      this.next();
     }));
+    
+  }
 
+  next(){
+    if(this.currentPlayer == this.players[0]){
+      this.currentPlayer = this.players[1];
+      this.opponentPlayer = this.players[0];
+    }else{
+      this.currentPlayer = this.players[0];
+      this.opponentPlayer = this.players[1];
+    }
+    if(((this.players[0].cell.x == this.players[1].cell.x + 1 || this.players[0].cell.x == this.players[1].cell.x - 1) &&  this.players[0].cell.y == this.players[1].cell.y) || ((this.players[0].cell.y == this.players[1].cell.y + 1 || this.players[0].cell.y == this.players[1].cell.y - 1) &&  this.players[0].cell.x == this.players[1].cell.x)){
+      $("#attackButton").click(() => {this.attack()});
+      $("#defendButton").click(() => {this.defend()});
+    }else{
+      this.move();
+    }
+    this.currentPlayer.renderPlayerInfo();
+  }
 
+  attack(){
+    console.log("Bim boum");
+    this.players[0].health = this.currentPlayer.weapon.damage;
+    this.currentPlayer.defend = false;
+    $("#attackButton").off("click");
+    $("#defendButton").off("click");
+    this.next();
+  }
 
+  defend(){
+    console.log("Shielded");
+    this.currentPlayer.defend = true;
+    $("#defendButton").off("click");
+    $("#attackButton").off("click");
+    this.next();
   }
 
 }
@@ -167,17 +213,12 @@ class Grid {
 let playGrid = new Grid(10,10,
   10,
   [
-    new Player("Ninja", 'ninja', new Weapon("Dague", "dague", 10)),
-    new Player("Samourai", 'samourai', new Weapon("Dague", "dague", 10))
+    new Player("Ninja", 'ninja', new Weapon("Lance", "spear", 10)),
+    new Player("Samourai", 'samourai', new Weapon("Lance", "spear", 10))
   ],
   [
     new Weapon("Epée", "sword", 15),
     new Weapon("Epée", "sword", 15),
-    new Weapon("Hache", "axe", 20),
-    new Weapon("Lance", "spear", 30)
+    new Weapon("Hache", "axe", 20)
   ]
 );
-
-
-
-playGrid.move();
