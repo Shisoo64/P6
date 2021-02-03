@@ -16,10 +16,54 @@
   <div id="actions" class="mt-4 text-center">
     <button id="attackButton" type="button" class="btn btn-danger">Attack</button>
     <button id="defendButton" type="button" class="btn btn-secondary">Defend</button>
-    <p id="currentPlayer" class="display-4"></p>
-    <p>Points de vie :</p>
-    <p id="playerHealth" class=""></p>
+
+
+
+
+    <div class="row">
+      <div class="col-sm-6">
+        
+        <div class="card mt-3 currentPlayerCard">
+          <div class="card-body">
+            <h5 class="card-title" id="playerName0">PlayerName</h5>
+            <h6 class="card-subtitle mb-2 text-muted" id="playerWeapon0">Weapon</h6>
+            <p class="card-text" id="playerHealth0">Health</p>
+          </div>
+        </div>
+
+      </div>
+      <div class="col-sm-6">
+        
+
+        <div class="card mt-3">
+          <div class="card-body">
+            <h5 class="card-title" id="playerName1">PlayerName</h5>
+            <h6 class="card-subtitle mb-2 text-muted" id="playerWeapon1">Weapon</h6>
+            <p class="card-text" id="playerHealth1">Health</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
   </div>
+
+
+
+  <!-- Win Modal -->
+  <div class="modal" tabindex="-1" role="dialog" id="winnerModal">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title text-center">Bravo!</h3>
+        </div>
+        <div class="modal-body text-center">
+          <p id="winnerText"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>

@@ -10,9 +10,10 @@ class Player {
 
 
   //Actualise l'interface
-  renderPlayerInfo() {
-    $("#playerHealth").text(this.health);
-    $("#currentPlayer").text(this.code);
+  renderPlayerInfo(number) {
+    $("#playerHealth" + number).text(this.health);
+    $("#playerName" + number).text(this.name);
+    $("#playerWeapon" + number).text(this.weapon.name + " : " + this.weapon.damage);
   }
 
 }
@@ -74,6 +75,7 @@ class Grid {
       }
     }
 
+
     //Ajout random des pierres
     for (var i = 0; i < this.numberOfRocks; i++) {
       let randomCell = this.randomCell();
@@ -91,7 +93,15 @@ class Grid {
       player.cell = randomCell;
     });
     this.cells.forEach(cell => cell.render());
-    this.currentPlayer.renderPlayerInfo();
+
+    this.opponentPlayer.renderPlayerInfo(1);
+    this.currentPlayer.renderPlayerInfo(0);
+
+
+    $('.cell').width(100/width + "%");
+    $('.cell').height($('.cell').width());
+
+
     this.move();
   }
 
@@ -159,8 +169,7 @@ class Grid {
 
       if(cell.weapon != null){
         [this.currentPlayer.weapon, cell.weapon] = [cell.weapon, this.currentPlayer.weapon];
-        console.log("Vous avez ramassé : ");
-        console.log(this.currentPlayer.weapon);
+        console.log("Vous avez ramassé : " + this.currentPlayer.weapon);
       }
       availableCells.forEach(cell => {
         cell.move = false;
@@ -180,18 +189,28 @@ class Grid {
       this.currentPlayer = this.players[0];
       this.opponentPlayer = this.players[1];
     }
+    if(this.currentPlayer.health <= 0){
+      this.finish(this.opponentPlayer);
+      return;
+    }
     if(((this.players[0].cell.x == this.players[1].cell.x + 1 || this.players[0].cell.x == this.players[1].cell.x - 1) &&  this.players[0].cell.y == this.players[1].cell.y) || ((this.players[0].cell.y == this.players[1].cell.y + 1 || this.players[0].cell.y == this.players[1].cell.y - 1) &&  this.players[0].cell.x == this.players[1].cell.x)){
       $("#attackButton").click(() => {this.attack()});
       $("#defendButton").click(() => {this.defend()});
     }else{
       this.move();
     }
-    this.currentPlayer.renderPlayerInfo();
+    this.currentPlayer.renderPlayerInfo(0);
+    this.opponentPlayer.renderPlayerInfo(1);
   }
 
   attack(){
     console.log("Bim boum");
-    this.players[0].health = this.currentPlayer.weapon.damage;
+    if(this.opponentPlayer.defend){
+      this.opponentPlayer.health -= this.currentPlayer.weapon.damage / 2;
+    }else{
+      this.opponentPlayer.health -= this.currentPlayer.weapon.damage;
+    }
+    
     this.currentPlayer.defend = false;
     $("#attackButton").off("click");
     $("#defendButton").off("click");
@@ -204,6 +223,11 @@ class Grid {
     $("#defendButton").off("click");
     $("#attackButton").off("click");
     this.next();
+  }
+
+  finish(winner){
+    $("#winnerModal").modal('show')
+    $("#winnerText").text(winner.name + " as gagné la bataille!");
   }
 
 }
@@ -222,3 +246,10 @@ let playGrid = new Grid(10,10,
     new Weapon("Hache", "axe", 20)
   ]
 );
+
+
+
+//Change height on resize
+$( window ).resize(function() {
+  $('.cell').height($('.cell').width());
+});

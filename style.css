@@ -1,26 +1,42 @@
-.cell {
-	/*border: 1px solid #80808030;*/
-	width: 50px;
-	height: 50px;
-	display: inline-block;
+body{
+	background-color: #333;
+    color: #fff;
+}
 
+.modal{
+	color:#333;
+}
+
+.cell {
+	max-width: 60px;
+	max-height: 60px;
+	display: inline-block;
 	image-rendering: pixelated;
 	background-size: contain;
-	background-repeat: no-repeat;
 }
 
 
 #container {
+  background-color: #fff;
   margin:auto;
   display: flex;
   flex-flow: row wrap;
-  width:500px;
+  width:50vw;
+  max-width: 600px;
 }
 
 
+.currentPlayerCard{
+	background-color: #f9d883;
+}
+
+.card{
+	color:#333;
+}
+
 #actions{
 	margin:auto;
-	width:500px;
+  	width:50vw;
 }
 
 #actions .btn{
@@ -32,19 +48,20 @@
 
 /* Skins */ 
 
+.movement{
+	-webkit-box-shadow: inset 0px 0px 50px 15px rgba(41,164,255,0.6);
+	-moz-box-shadow: inset 0px 0px 50px 15px rgba(41,164,255,0.6);
+	box-shadow: inset 0px 0px 50px 15px rgba(41,164,255,0.6);
+}
+
+
+
 .empty{
 	background-image: url("img/ground.png");
 }
 
 .player{
 	background-image: url("img/player.png")!important;
-}
-
-
-.movement{
-	-webkit-box-shadow: inset 0px 0px 50px 15px rgba(41,164,255,0.6);
-	-moz-box-shadow: inset 0px 0px 50px 15px rgba(41,164,255,0.6);
-	box-shadow: inset 0px 0px 50px 15px rgba(41,164,255,0.6);
 }
 
 
@@ -70,11 +87,6 @@
 	background-image: url("img/weapon-spear.png");
 }
 
-
-/*
-.rock{
-	background-image: url("img/rock.png");
-}*/
 
 .rock0{
 	background-image: url("img/rock0.png");
